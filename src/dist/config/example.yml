@@ -15,7 +15,8 @@ database:
   password: sa
 
   # the JDBC URL
-  url: jdbc:h2:target/example;INIT=runscript from './src/dist/data/seed.sql'
+  url: jdbc:h2:./target/example
+#  url: jdbc:h2:target/example;INIT=runscript from './src/dist/data/seed.sql'
 
 # HTTP-specific options.
 server:
