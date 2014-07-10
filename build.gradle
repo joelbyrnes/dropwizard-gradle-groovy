@@ -1,5 +1,5 @@
 apply plugin: 'groovy'
-apply plugin: 'fatjar'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 apply plugin: 'project-report'
 apply plugin: 'idea'
@@ -11,14 +11,13 @@ mainClassName = 'com.example.helloworld.HelloWorldApplication'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-// Add Gradle FatJar Plugin, see https://github.com/musketyr/gradle-fatjar-plugin
+// Add shadow plugin
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
-
     dependencies {
-        classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.2'
     }
 }
 
@@ -30,6 +29,7 @@ project.ext {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -48,10 +48,8 @@ dependencies {
     testCompile group: 'org.easytesting', name: 'fest-assert-core', version: '2.0M10'
 }
 
-// Configure the fatJar task
-fatJar {
-    classifier 'fat'
-
+// Configure the jar task
+jar {
     // We need to add the main class to the manifest, otherwise the JAR won't start.
     manifest {
         attributes 'Main-Class': mainClassName
@@ -60,6 +58,12 @@ fatJar {
     // We have to exclude signature files from the fat JAR, otherwise we'll get invalid signature file digest errors.
     exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
 }
+
+//shadowJar {
+//    exclude 'META-INF/*.DSA'
+//    exclude 'META-INF/*.RSA'
+//    exclude 'META-INF/*.SF'
+//}
 
 // Configure the run task to start the Dropwizard service
 
