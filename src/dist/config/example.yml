@@ -18,25 +18,38 @@ database:
   url: jdbc:h2:./target/example
 #  url: jdbc:h2:target/example;INIT=runscript from './src/dist/data/seed.sql'
 
-# HTTP-specific options.
-server:
+# use the simple server factory if you only want to run on a single port
+#server:
+#  type: simple
+#  connector:
+#    type: http
+#    port: 8080
 
+server:
+#  softNofileLimit: 1000
+#  hardNofileLimit: 1000
   applicationConnectors:
     - type: http
       port: 8080
-#    - type: https
-#      port: 8443
+    - type: https
+      port: 8443
+      keyStorePath: example.keystore
+      keyStorePassword: example
+      validateCerts: false
+# this requires the npn-boot library on the JVM's boot classpath
+#    - type: spdy3
+#      port: 8445
 #      keyStorePath: example.keystore
 #      keyStorePassword: example
 #      validateCerts: false
   adminConnectors:
     - type: http
       port: 8081
-#    - type: https
-#      port: 8444
-#      keyStorePath: example.keystore
-#      keyStorePassword: example
-#      validateCerts: false
+    - type: https
+      port: 8444
+      keyStorePath: example.keystore
+      keyStorePassword: example
+      validateCerts: false
 
   # Maximum number of threads.
   maxThreads: 100
@@ -60,15 +73,3 @@ logging:
 
   appenders:
     - type: console
-      threshold: ALL
-
-    - type: file
-      threshold: ALL
-      currentLogFilename: ./logs/example.log
-      archivedLogFilenamePattern: ./logs/example-%d.log.gz
-      archivedFileCount: 5
-
-  # Settings for logging to syslog.
-    - type: syslog
-      host: localhost
-      facility: local0
