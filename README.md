@@ -16,6 +16,11 @@ or the [Maven Shade Plugin](http://maven.apache.org/plugins/maven-shade-plugin/)
 
 To create a fat JAR just run `gradle fatJar`. The resulting JAR will be saved as `./build/libs/dropwizard-gradle-fat.jar`.
 
+## Shadow
+
+Shadow is a rewrite of the maven shade plugin for Gradle, which is faster than fatJar.
+I am trying to get this to work instead.
+
 ## Gradle Application Plugin
 
 An alternative to creating a fat JAR is using the [Gradle Application Plugin](http://www.gradle.org/docs/current/userguide/application_plugin.html).
