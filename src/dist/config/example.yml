@@ -2,22 +2,6 @@ template: Hello, %s!
 
 defaultName: Stranger
 
-# Database settings.
-database:
-
-  # the name of your JDBC driver
-  driverClass: org.h2.Driver
-
-  # the username
-  user: sa
-
-  # the password
-  password: sa
-
-  # the JDBC URL
-  url: jdbc:h2:./target/example
-#  url: jdbc:h2:target/example;INIT=runscript from './src/dist/data/seed.sql'
-
 # use the simple server factory if you only want to run on a single port
 #server:
 #  type: simple
@@ -31,11 +15,11 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
-    - type: https
-      port: 8443
-      keyStorePath: example.keystore
-      keyStorePassword: example
-      validateCerts: false
+#    - type: https
+#      port: 8443
+#      keyStorePath: example.keystore
+#      keyStorePassword: example
+#      validateCerts: false
 # this requires the npn-boot library on the JVM's boot classpath
 #    - type: spdy3
 #      port: 8445
@@ -45,11 +29,11 @@ server:
   adminConnectors:
     - type: http
       port: 8081
-    - type: https
-      port: 8444
-      keyStorePath: example.keystore
-      keyStorePassword: example
-      validateCerts: false
+#    - type: https
+#      port: 8444
+#      keyStorePath: example.keystore
+#      keyStorePassword: example
+#      validateCerts: false
 
   # Maximum number of threads.
   maxThreads: 100

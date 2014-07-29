@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type='text/javascript'>
+        var source = new EventSource("/randomNumber");
+
+        var counter = 0;
+
+        /*
+        source.addEventListener('message', function(e) {
+            console.log(e.data);
+            //alert("got message");
+            handleData("message", e.data);
+        }, false);
+        */
+
+        source.addEventListener('open', function(e) {
+            // Connection was opened.
+            handleData("open", "Connection opened");
+        }, false);
+
+        source.addEventListener('error', function(e) {
+            handleData("error", e);
+            writeObj(e);
+            switch (e.target.readyState) {
+                // if reconnecting
+                case EventSource.CONNECTING:
+                    handleData("error", 'Reconnecting...');
+                    break;
+                // if error was fatal
+                case EventSource.CLOSED:
+                    // Connection was closed.
+                    handleData("error", "connection closed");
+                    break;
+            }
+        }, false);
+
+        source.onmessage = function(event) {
+            //alert("onmessage");
+            handleData("onmessage", event.data);
+        };
+
+        /*
+        source.onerror = function(event) {
+            //alert("onerror");
+            handleData("onerror", event.data);
+        };
+        */
+
+        function handleData(eventName, data) {
+            var tbody = document.getElementById('numbers').tBodies[0];
+
+            var tr = tbody.insertRow(0);
+
+            var counterTd = tr.insertCell(0);
+
+            counterTd.innerHTML = counter++;
+
+            var eventTd = tr.insertCell(1);
+
+            eventTd.innerHTML = eventName;
+
+            var randomTd = tr.insertCell(2);
+
+            randomTd.innerHTML = data;
+
+//        document.getElementById("result").innerHTML+=event.data + "<br>";
+        }
+
+        function writeObj(obj, message) {
+            if (!message) {
+                message = obj;
+            }
+            var details = "*****************" + "\n" + message + "\n";
+            var fieldContents;
+            for (var field in obj) {
+                fieldContents = obj[field];
+                if (typeof(fieldContents) == "function") {
+                    fieldContents = "(function)";
+                }
+                details += "  " + field + ": " + fieldContents + "\n";
+            }
+            console.log(details);
+        }
+
+    </script>
+    <title>HTML Server-Side events example</title>
+</head>
+<body>
+<h3>Receive a random number every second</h3>
+
+<div id="result"></div>
+
+<table id="numbers" border="1">
+    <tbody/>
+</table>
+</body>
+</html>
