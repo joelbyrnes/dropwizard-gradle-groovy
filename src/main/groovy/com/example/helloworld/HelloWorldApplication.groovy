@@ -46,9 +46,5 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 
         environment.jersey().register(new ChannelResource());
         environment.servlets().addServlet("channel", new ChannelEventSourceServlet()).addMapping("/channel/events")
-
-//        environment.servlets().addServlet("chat-channel", new ChatEventSourceServlet()).addMapping("/chat/channel")
-//        // TODO should be replaced with resource
-//        environment.servlets().addServlet("chat-send", new SendServlet()).addMapping("/chat/send")
     }
 }

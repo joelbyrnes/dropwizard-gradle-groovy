@@ -29,8 +29,8 @@ public class EventPublisher {
                 listeners.each { ChannelEventSource listener ->
                     try {
                         // TODO ensure correct number of newlines
-                        if (eventName) listener.event(eventName, message + "\n\n")
-                        else listener.data(message + "\n\n")
+                        if (eventName) listener.event(eventName, message + "\n")
+                        else listener.data(message + "\n")
                     }
                     catch(IOException e) {
                         LOG.error("IOException emitting event to listener: " + e.getMessage())
