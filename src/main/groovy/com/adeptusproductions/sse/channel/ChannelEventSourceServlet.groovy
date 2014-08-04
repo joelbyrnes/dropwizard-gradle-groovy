@@ -1,6 +1,5 @@
 package com.adeptusproductions.sse.channel
 
-import org.ahedstrom.example.SseEventSource
 import org.eclipse.jetty.servlets.EventSource
 import org.eclipse.jetty.servlets.EventSourceServlet
 import org.slf4j.Logger
@@ -15,7 +14,9 @@ public class ChannelEventSourceServlet extends EventSourceServlet {
 	protected EventSource newEventSource(HttpServletRequest request) {
         LOG.info("ChannelEventSourceServlet")
         def l = new ChannelEventSource()
-        EventPublisher.addListener(l)
+        println "eventsource request for channel ${request.getParameter("channel")}"
+        def channel = Channels.channels.get(request.getParameter("channel"))
+        channel.addListener(l)
         return l
 	}
 }

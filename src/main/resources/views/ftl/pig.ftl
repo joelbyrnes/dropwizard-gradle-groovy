@@ -4,11 +4,14 @@
     <script src="/assets/jquery-1.11.1.min.js"></script>
 
     <script type='text/javascript'>
+        var channel = "pig";
+
         window.onload = function(){
 //            log("called onload");
 
             if(typeof(EventSource) !== "undefined") {
-                setupEventSource("/channel/events");
+//                setupEventSource("/channel/events");
+                setupEventSource("/channel/events?channel=" + channel);
             } else {
                 log("EventSource is undefined");
                 addAlert("Sorry, your browser does not support server-sent events, so it cannot receive sound events. You can still play sounds to other users though. ");
@@ -49,6 +52,8 @@
 
             source.addEventListener('error', function(e) {
                 console.log("error: " + e);
+//                console.log("target: " + e.target);
+//                console.log("target data: " + e.target.data);
                 switch (e.target.readyState) {
                     // if reconnecting
                     case EventSource.CONNECTING:
@@ -66,12 +71,17 @@
 //                log("onmessage default event handler: " + event.data);
 //            };
 
-            // default event is message
+            // event with no type defaults to message
             source.addEventListener('message', function(event) {
                 log("message event: " + event.data);
 //                log("lastEventId: " + event.lastEventId);
                 var data = jQuery.parseJSON(event.data);
                 addMessage("message: " + data.message)
+            }, false);
+
+            source.addEventListener('server-message', function(event) {
+                var data = jQuery.parseJSON(event.data);
+                log("server-message: " + data.message)
             }, false);
 
             source.addEventListener('sound', function(event) {
@@ -89,7 +99,7 @@
         }
 
         function playAll(sound) {
-            $.post('/channel/play', {sound: sound});
+            $.post('/channel/' + channel + '/play', {sound: sound});
         }
 
         function playLocal(sound) {

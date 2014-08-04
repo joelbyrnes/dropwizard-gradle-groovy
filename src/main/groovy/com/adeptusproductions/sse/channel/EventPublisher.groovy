@@ -5,32 +5,33 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 public class EventPublisher {
-    private static final Logger LOG = LoggerFactory.getLogger(EventPublisher.class)
-    private static List<ChannelEventSource> listeners = Collections.synchronizedList([])
+    private final Logger LOG = LoggerFactory.getLogger(EventPublisher.class)
+    private List<ChannelEventSource> listeners = Collections.synchronizedList([])
 
-    static def sound(String str) {
-        JsonBuilder jb = new JsonBuilder()
-        jb([sound: str])
-        pub(jb.toString(), "sound")     // needs data newline?
+    def sound(String str) {
+        pub("sound", [sound: str])
     }
 
-    static def message(String str) {
-        JsonBuilder jb = new JsonBuilder()
-        jb([message: str])
-        pub(jb.toString(), "message")     // needs data newline?
+    def message(String str) {
+        pub("message", [message: str])
     }
 
-    public static void pub(String message, String eventName = null) {
+    def pub(String eventName, Map data) {
+        JsonBuilder jb = new JsonBuilder()
+        jb(data)
+        pub(eventName, jb.toString())
+    }
+
+    public void pub(String eventName, String data) {
         synchronized(listeners) {
             if (listeners.size() == 0) {
                 LOG.warn("no listeners to send to!")
             } else {
-                LOG.info("pushing message: '${message}'")
+                LOG.info("pushing data: '${data}'")
                 listeners.each { ChannelEventSource listener ->
                     try {
-                        // TODO ensure correct number of newlines
-                        if (eventName) listener.event(eventName, message + "\n")
-                        else listener.data(message + "\n")
+                        if (eventName) listener.event(eventName, data + "\n")
+                        else listener.data(data + "\n")
                     }
                     catch(IOException e) {
                         LOG.error("IOException emitting event to listener: " + e.getMessage())
@@ -41,17 +42,17 @@ public class EventPublisher {
         }
     }
     
-    public static void addListener(ChannelEventSource l) {
+    public void addListener(ChannelEventSource l) {
         listeners.add(l)
         message("User added. User count now: " + listenerCount())
     }
     
-    public static void removeListener(ChannelEventSource l) {
+    public void removeListener(ChannelEventSource l) {
         listeners.remove(l)
         message("User removed. User count now: " + listenerCount())
     }
 
-    public static Long listenerCount() {
+    public Long listenerCount() {
         // do we need to synchronize for a get?
         synchronized(listeners) {
             return listeners.size()

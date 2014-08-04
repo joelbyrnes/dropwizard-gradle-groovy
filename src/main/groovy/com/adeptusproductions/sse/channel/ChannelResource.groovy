@@ -16,44 +16,40 @@ import javax.ws.rs.QueryParam
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-@Path("/channel")
+@Path("/channel/{channel}")
 public class ChannelResource {
-
-    @Path("publish")
-    @POST
-    public Response publish(@FormParam("msg") String msg) {
-        EventPublisher.pub(msg)
-        return Response.ok().build()
-    }
 
     @Path("message")
     @POST
-    public Response message(@FormParam("msg") String msg) {
-        EventPublisher.message(msg)
+    public Response message(@PathParam("channel") String channel, @FormParam("msg") String msg) {
+//        EventPublisher.message(msg)
+        Channels.channels.get(channel).message(msg)
         return Response.ok().build()
     }
 
     @Path("play")
     @POST
-    public Response play(@FormParam("sound") String sound) {
-        EventPublisher.sound(sound)
+    public Response play(@PathParam("channel") String channel, @FormParam("sound") String sound) {
+//        EventPublisher.sound(sound)
+        Channels.channels.get(channel).sound(sound)
         return Response.ok().build()
     }
 
     @GET
     @Path("userCount")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map userCount() {
-        return [userCount: EventPublisher.listenerCount()]
+    public Map userCount(@PathParam("channel") String channelName) {
+        def channel = Channels.channels.get(channelName)
+        return [userCount: channel.listenerCount()]
     }
 
     @GET
-    @Path("{name}/info")
+    @Path("info")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map info(@PathParam("name") String channelName) {
-//        Channels.channels.get(channelName).listenerCount()
+    public Map info(@PathParam("channel") String channelName) {
+        def channel = Channels.channels.get(channelName)
         return [name: channelName,
-                userCount: EventPublisher.listenerCount()]
+                userCount: channel.listenerCount()]
     }
 
     @GET
@@ -64,10 +60,19 @@ public class ChannelResource {
         }
     }
 
+//    @GET
+//    @Path("/")
+//    @Produces("text/html;charset=UTF-8")
+//    public View getChannel(@PathParam("channel") String channelName) {
+//        // TODO 302 redirect to /channel/events?channel=channel
+//        return new View("/views/ftl/pig.ftl", Charsets.UTF_8) {
+//        }
+//    }
+
     @GET
     @Path("log")
     @Produces("text/html;charset=UTF-8")
-    public View logPage() {
+    public View logPage(@PathParam("channel") String channelName) {
         return new View("/views/ftl/log.ftl", Charsets.UTF_8) {
         }
     }

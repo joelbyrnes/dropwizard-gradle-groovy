@@ -1,5 +1,6 @@
 package com.adeptusproductions.sse.channel
 
+import groovy.json.JsonBuilder
 import org.eclipse.jetty.servlets.EventSource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,19 +26,29 @@ class ChannelEventSource implements EventSource {
     public void onOpen(EventSource.Emitter emitter) throws IOException {
         LOG.info("onOpen")
         this.emitter = emitter
-        EventPublisher.message("user ${id} joined (eventSource onOpen)")
+        event("server-message", [message: "eventSource onOpen"])
     }
 
     @Override
     public void onClose() {
         LOG.info("onClose")
-        EventPublisher.removeListener(this)
-        EventPublisher.message("user ${id} left (eventSource onClose)")
+        // this probably causes exceptions because the stream is closed
+//        event("server-message", [message: "eventSource onClose"])
+
+        // TODO how to remove from channels?
+//        EventPublisher.removeListener(this)
     }
 
     public void data(String dataToSend) throws IOException {
         LOG.info("emitEvent data: " + dataToSend)
         this.emitter?.data(dataToSend)
+    }
+
+    public void event(String eventName, Map data) throws IOException {
+        JsonBuilder jb = new JsonBuilder()
+        jb(data)
+        def str = jb.toString()
+        event(eventName, str)
     }
 
     public void event(String eventName, String dataToSend) throws IOException {
