@@ -9,4 +9,8 @@ package com.adeptusproductions.sse.channel
  */
 class Channels {
     static Map<String, EventPublisher> channels = [:].withDefault { new EventPublisher() }
+
+    static void removeListener(ChannelEventSource channelEventSource) {
+        channels.values().each { it.removeListener(channelEventSource) }
+    }
 }

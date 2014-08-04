@@ -35,8 +35,8 @@ class ChannelEventSource implements EventSource {
         // this probably causes exceptions because the stream is closed
 //        event("server-message", [message: "eventSource onClose"])
 
-        // TODO how to remove from channels?
-//        EventPublisher.removeListener(this)
+        // remove from any channel they might have been in
+        Channels.removeListener(this)
     }
 
     public void data(String dataToSend) throws IOException {

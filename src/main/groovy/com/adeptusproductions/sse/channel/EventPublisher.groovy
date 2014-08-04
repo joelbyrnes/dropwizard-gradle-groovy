@@ -44,12 +44,12 @@ public class EventPublisher {
     
     public void addListener(ChannelEventSource l) {
         listeners.add(l)
-        message("User added. User count now: " + listenerCount())
+        pub('channel-message', [message: "User added. User count now: " + listenerCount()])
     }
     
     public void removeListener(ChannelEventSource l) {
         listeners.remove(l)
-        message("User removed. User count now: " + listenerCount())
+        pub('channel-message', [message: "User removed. User count now: " + listenerCount()])
     }
 
     public Long listenerCount() {
