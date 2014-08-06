@@ -4,9 +4,9 @@ import groovy.json.JsonBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-public class EventPublisher {
-    private final Logger LOG = LoggerFactory.getLogger(EventPublisher.class)
-    private final List<ChannelEventSource> listeners = Collections.synchronizedList([])
+public class Channel {
+    private final Logger LOG = LoggerFactory.getLogger(Channel.class)
+    private final List<Listener> listeners = Collections.synchronizedList([])
 
     def sound(String str) {
         pub("sound", [sound: str])
@@ -28,7 +28,7 @@ public class EventPublisher {
                 LOG.warn("no listeners to send to!")
             } else {
                 LOG.info("pushing data: '${data}'")
-                listeners.each { ChannelEventSource listener ->
+                listeners.each { Listener listener ->
                     try {
                         if (eventName) listener.event(eventName, data + "\n")
                         else listener.data(data + "\n")
@@ -42,24 +42,24 @@ public class EventPublisher {
         }
     }
     
-    public void addListener(ChannelEventSource l) {
+    public void addListener(Listener l) {
         synchronized(listeners) {
             listeners.add(l)
         }
         pub('channel-message', [message: "User added. User count now: " + listenerCount()])
     }
 
-    public void userParted(ChannelEventSource l) {
+    public void userParted(Listener l) {
         removeListener(l)
         pub('server-message', [message: "User left. User count now: " + listenerCount()])
     }
 
-    public void userDropped(ChannelEventSource l) {
+    public void userDropped(Listener l) {
         removeListener(l)
         pub('server-message', [message: "User dropped. User count now: " + listenerCount()])
     }
     
-    public void removeListener(ChannelEventSource l) {
+    public void removeListener(Listener l) {
         synchronized(listeners) {
             listeners.remove(l)
         }

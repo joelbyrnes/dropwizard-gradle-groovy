@@ -12,13 +12,13 @@ http://www.html5rocks.com/en/tutorials/eventsource/basics/
 http://www.w3.org/TR/eventsource/
  */
 
-class ChannelEventSource implements EventSource {
-    private static final Logger LOG = LoggerFactory.getLogger(ChannelEventSource.class)
+class Listener implements EventSource {
+    private static final Logger LOG = LoggerFactory.getLogger(Listener.class)
 
     private EventSource.Emitter emitter
     private String id
 
-    public ChannelEventSource() {
+    public Listener() {
         this.id = UUID.randomUUID().toString()
     }
 
@@ -65,8 +65,8 @@ class ChannelEventSource implements EventSource {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ChannelEventSource) {
-            ChannelEventSource that = (ChannelEventSource)obj
+        if (obj instanceof Listener) {
+            Listener that = (Listener)obj
             return Objects.equals(this.id, that.id)
         }
         return false

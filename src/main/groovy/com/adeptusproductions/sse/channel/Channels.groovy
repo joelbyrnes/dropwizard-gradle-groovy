@@ -8,13 +8,13 @@ package com.adeptusproductions.sse.channel
  * To change this template use File | Settings | File Templates.
  */
 class Channels {
-    static Map<String, EventPublisher> channels = [:].withDefault { new EventPublisher() }
+    static Map<String, Channel> channels = [:].withDefault { new Channel() }
 
-    static void userParted(ChannelEventSource channelEventSource) {
-        channels.values().each { it.userParted(channelEventSource) }
+    static void userParted(Listener listener) {
+        channels.values().each { it.userParted(listener) }
     }
 
-    static void userDropped(ChannelEventSource channelEventSource) {
-        channels.values().each { it.userDropped(channelEventSource) }
+    static void userDropped(Listener listener) {
+        channels.values().each { it.userDropped(listener) }
     }
 }

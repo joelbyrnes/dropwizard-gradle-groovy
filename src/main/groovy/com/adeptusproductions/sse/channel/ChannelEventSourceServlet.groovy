@@ -13,7 +13,7 @@ public class ChannelEventSourceServlet extends EventSourceServlet {
 	@Override
 	protected EventSource newEventSource(HttpServletRequest request) {
         LOG.info("ChannelEventSourceServlet")
-        def l = new ChannelEventSource()
+        def l = new Listener()
         println "eventsource request for channel ${request.getParameter("channel")}"
         def channel = Channels.channels.get(request.getParameter("channel"))
         channel.addListener(l)
