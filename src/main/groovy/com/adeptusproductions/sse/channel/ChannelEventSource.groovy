@@ -31,12 +31,14 @@ class ChannelEventSource implements EventSource {
 
     @Override
     public void onClose() {
+        // TODO how to differentiate between user left and connection severed?
+        // TODO maybe users have to send a part command and will then be removed from a channel.
         LOG.info("onClose")
         // this probably causes exceptions because the stream is closed
 //        event("server-message", [message: "eventSource onClose"])
 
         // remove from any channel they might have been in
-        Channels.removeListener(this)
+        Channels.userDropped(this)
     }
 
     public void data(String dataToSend) throws IOException {

@@ -4,7 +4,8 @@
     <script src="/assets/jquery-1.11.1.min.js"></script>
 
     <script type='text/javascript'>
-        var channel = "pig";
+        // alternatively get the ./info page and extract channel from that?
+        var channel = "${channel?html}";
 
         window.onload = function(){
 //            log("called onload");

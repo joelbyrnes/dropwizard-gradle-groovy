@@ -55,8 +55,9 @@ public class ChannelResource {
     @GET
     @Path("/")
     @Produces("text/html;charset=UTF-8")
-    public View defaultChannelPage() {
-        return new View("/views/ftl/pig.ftl", Charsets.UTF_8) {
+    public View defaultChannelPage(@PathParam("channel") String channelName) {
+        return new View("/views/ftl/${channelName}.ftl", Charsets.UTF_8) {
+            def channel = "pig"
         }
     }
 

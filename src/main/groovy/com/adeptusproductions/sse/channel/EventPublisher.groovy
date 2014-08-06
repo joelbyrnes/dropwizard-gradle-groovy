@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 
 public class EventPublisher {
     private final Logger LOG = LoggerFactory.getLogger(EventPublisher.class)
-    private List<ChannelEventSource> listeners = Collections.synchronizedList([])
+    private final List<ChannelEventSource> listeners = Collections.synchronizedList([])
 
     def sound(String str) {
         pub("sound", [sound: str])
@@ -43,13 +43,27 @@ public class EventPublisher {
     }
     
     public void addListener(ChannelEventSource l) {
-        listeners.add(l)
+        synchronized(listeners) {
+            listeners.add(l)
+        }
         pub('channel-message', [message: "User added. User count now: " + listenerCount()])
+    }
+
+    public void userParted(ChannelEventSource l) {
+        removeListener(l)
+        pub('server-message', [message: "User left. User count now: " + listenerCount()])
+    }
+
+    public void userDropped(ChannelEventSource l) {
+        removeListener(l)
+        pub('server-message', [message: "User dropped. User count now: " + listenerCount()])
     }
     
     public void removeListener(ChannelEventSource l) {
-        listeners.remove(l)
-        pub('channel-message', [message: "User removed. User count now: " + listenerCount()])
+        synchronized(listeners) {
+            listeners.remove(l)
+        }
+//        pub('channel-message', [message: "User removed. User count now: " + listenerCount()])
     }
 
     public Long listenerCount() {
