@@ -96,21 +96,24 @@
 
         function squeeze() {
             addMessage("Generating Participation Interaction!");
-            playAll("2squeaks");
+            playAll("/assets/sounds/2squeaks.wav");
         }
 
         function playAll(sound) {
-            $.post('/channel/' + channel + '/play', {sound: sound});
+            $.post('/channel/' + channel + '/sound', {sound: sound});
         }
 
-        function playLocal(sound) {
+        function publish(event, data) {
+//            log("publishing: " + event + ", data: " + data);
+            $.post('/channel/' + channel + '/' + event, {url: data.soundUrl});
+        }
+
+        function playLocal(soundUrl) {
             if (typeof(Audio) == "undefined") {
                 addMessage("This browser cannot play sounds using HTML5 Audio.")
             } else {
-                addMessage("Playing sound " + sound + "");
-                var path = "/assets/sounds/" + sound + ".wav";
-                log("playing " + path);
-                var snd = new Audio(path); // buffers automatically when created
+                addMessage("Playing sound " + soundUrl + "");
+                var snd = new Audio(soundUrl); // buffers automatically when created
                 snd.play();
             }
         }

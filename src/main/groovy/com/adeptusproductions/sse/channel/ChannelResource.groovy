@@ -1,19 +1,17 @@
 package com.adeptusproductions.sse.channel
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.common.base.Charsets
-import groovy.json.JsonBuilder
 import io.dropwizard.views.View
-import org.hibernate.validator.constraints.Length
 
+import javax.ws.rs.Consumes
 import javax.ws.rs.FormParam
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
-import javax.ws.rs.QueryParam
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.MultivaluedMap
 import javax.ws.rs.core.Response
 
 @Path("/channel/{channel}")
@@ -22,16 +20,29 @@ public class ChannelResource {
     @Path("message")
     @POST
     public Response message(@PathParam("channel") String channel, @FormParam("msg") String msg) {
-//        EventPublisher.message(msg)
         Channels.channels.get(channel).message(msg)
         return Response.ok().build()
     }
 
     @Path("play")
     @POST
-    public Response play(@PathParam("channel") String channel, @FormParam("sound") String sound) {
-//        EventPublisher.sound(sound)
-        Channels.channels.get(channel).sound(sound)
+    @Consumes("application/x-www-form-urlencoded")
+    public Response play(@PathParam("channel") String channel, MultivaluedMap<String, String> formParams) {
+        println "received this data: "
+        formParams.each { println "${it.key}: ${it.value}"}
+
+        Channels.channels.get(channel).sound(formParams.sound)
+        return Response.ok().build()
+    }
+
+    @Path("sound")
+    @POST
+    @Consumes("application/x-www-form-urlencoded")
+    public Response receiveData(@PathParam("channel") String channel, MultivaluedMap<String, String> formParams) {
+        println "received this data: "
+        formParams.each { println "${it.key}: ${it.value}"}
+
+        Channels.channels.get(channel).pub("sound", formParams)
         return Response.ok().build()
     }
 
@@ -56,9 +67,11 @@ public class ChannelResource {
     @Path("/")
     @Produces("text/html;charset=UTF-8")
     public View defaultChannelPage(@PathParam("channel") String channelName) {
-        return new View("/views/ftl/${channelName}.ftl", Charsets.UTF_8) {
-            def channel = "pig"
+        def view = new View("/views/ftl/${channelName}.ftl", Charsets.UTF_8) {
+            String channel
         }
+        view.channel = channelName
+        return view
     }
 
 //    @GET
