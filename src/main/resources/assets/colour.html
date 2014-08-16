@@ -77,21 +77,6 @@
                 }
             }, false);
 
-            // generic event handler where event name not known
-            source.onmessage = function(event) {
-                log("onmessage default event handler: " + event.data);
-//                log("event name: " + event.name);
-                writeObj(event)
-            };
-
-            // event with no type defaults to message
-            source.addEventListener('message', function(event) {
-                log("message event: " + event.data);
-//                log("lastEventId: " + event.lastEventId);
-                var data = jQuery.parseJSON(event.data);
-                addMessage("message: " + data.message);
-            }, false);
-
             source.addEventListener('colour', function(event) {
                 log("colour event: " + event.data);
                 var data = jQuery.parseJSON(event.data);
