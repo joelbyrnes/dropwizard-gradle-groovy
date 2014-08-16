@@ -59,12 +59,21 @@
             addLineToElement("messages", msg);
         }
 
+        function setUserCount(count) {
+            document.getElementById('info').innerHTML = "Users: " + count;
+        }
+
         function setupEventSource(path) {
             source = new EventSource(path);
 
             source.addEventListener('open', function(e) {
                 // Connection was opened.
                 log("EventListener connected to " + path);
+
+                $.get('/channel/' + channel + '/info', function(info) {
+                    writeObj(info, "channel info");
+                    setUserCount(info.userCount);
+                });
             }, false);
 
             source.addEventListener('error', function(e) {
@@ -109,7 +118,7 @@
             source.addEventListener('channel-message', function(event) {
                 var data = jQuery.parseJSON(event.data);
                 addMessage("channel-message: " + data.message);
-                document.getElementById('info').innerHTML = "Users: " + data.userCount
+                setUserCount(data.userCount);
             }, false);
 
             source.addEventListener('sound', function(event) {
@@ -167,7 +176,7 @@
 
 <div class="centered">
     <h2>Test</h2>
-    <div id="info">Users: ?</div>
+    <div id="info"></div>
     <br/>
 
     Alerts<br/>
