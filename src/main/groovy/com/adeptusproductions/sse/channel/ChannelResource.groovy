@@ -4,7 +4,6 @@ import com.google.common.base.Charsets
 import io.dropwizard.views.View
 
 import javax.ws.rs.Consumes
-import javax.ws.rs.FormParam
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
@@ -17,41 +16,17 @@ import javax.ws.rs.core.Response
 @Path("/channel/{channel}")
 public class ChannelResource {
 
-    @Path("message")
-    @POST
-    public Response message(@PathParam("channel") String channel, @FormParam("msg") String msg) {
-        Channels.channels.get(channel).message(msg)
-        return Response.ok().build()
-    }
-
-    @Path("play")
+    @Path("{eventName}")
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response play(@PathParam("channel") String channel, MultivaluedMap<String, String> formParams) {
-        println "received this data: "
+    public Response receiveData(@PathParam("channel") String channel,
+                                @PathParam("eventName") String eventName,
+                                MultivaluedMap<String, String> formParams) {
+        println "generic event method received this data: "
         formParams.each { println "${it.key}: ${it.value}"}
 
-        Channels.channels.get(channel).sound(formParams.sound)
+        Channels.channels.get(channel).pub(eventName, formParams)
         return Response.ok().build()
-    }
-
-    @Path("sound")
-    @POST
-    @Consumes("application/x-www-form-urlencoded")
-    public Response receiveData(@PathParam("channel") String channel, MultivaluedMap<String, String> formParams) {
-        println "received this data: "
-        formParams.each { println "${it.key}: ${it.value}"}
-
-        Channels.channels.get(channel).pub("sound", formParams)
-        return Response.ok().build()
-    }
-
-    @GET
-    @Path("userCount")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Map userCount(@PathParam("channel") String channelName) {
-        def channel = Channels.channels.get(channelName)
-        return [userCount: channel.listenerCount()]
     }
 
     @GET
@@ -59,7 +34,7 @@ public class ChannelResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Map info(@PathParam("channel") String channelName) {
         def channel = Channels.channels.get(channelName)
-        return [name: channelName,
+        return [name: channel.name,
                 userCount: channel.listenerCount()]
     }
 
@@ -67,11 +42,15 @@ public class ChannelResource {
     @Path("/")
     @Produces("text/html;charset=UTF-8")
     public View defaultChannelPage(@PathParam("channel") String channelName) {
-        def view = new View("/views/ftl/${channelName}.ftl", Charsets.UTF_8) {
+        getViewForChannel(channelName, channelName)
+    }
+
+    private View getViewForChannel(String templateName, String channelName) {
+        def view = new View("/views/ftl/${templateName}.ftl", Charsets.UTF_8) {
             String channel
         }
         view.channel = channelName
-        return view
+        view
     }
 
 //    @GET
@@ -87,7 +66,14 @@ public class ChannelResource {
     @Path("log")
     @Produces("text/html;charset=UTF-8")
     public View logPage(@PathParam("channel") String channelName) {
-        return new View("/views/ftl/log.ftl", Charsets.UTF_8) {
-        }
+        getViewForChannel("log", channelName)
     }
+
+    @GET
+    @Path("test")
+    @Produces("text/html;charset=UTF-8")
+    public View test(@PathParam("channel") String channelName) {
+        getViewForChannel("test", channelName)
+    }
+
 }

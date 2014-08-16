@@ -4,20 +4,26 @@
     <script src="/assets/jquery-1.11.1.min.js"></script>
 
     <script type='text/javascript'>
-        // TODO get from request
-        var channel = "pig";
+        var channel = "${channel?html}";
+        var source;
 
         window.onload = function(){
-//            log("called onload");
-
             if(typeof(EventSource) !== "undefined") {
-//                setupEventSource("/channel/events");
+//                setupEventSource("/channel/" + channel + "/events");
                 setupEventSource("/channel/events?channel=" + channel);
             } else {
                 log("EventSource is undefined");
-                addAlert("Sorry, your browser does not support server-sent events, so it cannot receive sound events. You can still play sounds to other users though. ");
+                alert("Sorry, your browser does not support server-sent events, so it cannot receive events. You can still send events to other users though. ");
             }
         };
+
+        function connect() {
+            setupEventSource("/channel/events?channel=" + channel);
+        }
+
+        function disconnect() {
+            source.close();
+        }
 
         function log(msg) {
             // stupid IE doesn't support console, so processing stops. annoy the user with alerts instead.
@@ -39,7 +45,7 @@
         }
 
         function setupEventSource(path) {
-            var source = new EventSource(path);
+            source = new EventSource(path);
 
             source.addEventListener('open', function(e) {
                 // Connection was opened.
@@ -63,9 +69,12 @@
                 }
             }, false);
 
-//            source.onmessage = function(event) {
-//                log("onmessage default event handler: " + event.data);
-//            };
+            // generic event handler where event name not known
+            source.onmessage = function(event) {
+                log("onmessage default event handler: " + event.data);
+//                log("event name: " + event.name);
+                writeObj(event)
+            };
 
             // event with no type defaults to message
             source.addEventListener('message', function(event) {
@@ -87,6 +96,7 @@
 
             source.addEventListener('sound', function(event) {
                 log("sound event: " + event.data);
+                log("event name: " + event.name);
 //                log("lastEventId: " + event.lastEventId);
                 var data = jQuery.parseJSON(event.data);
                 log("event data: " + data);
@@ -121,13 +131,14 @@
 <body>
 
 <div class="centered">
-    <h2>Log</h2>
+    <h2>Test</h2>
 
     Alerts<br/>
     <div id="alerts"></div>
     <br/>
 
-    <!--<input type="button" name="sound" value="Play sound locally" onclick="playLocal('2squeaks'); return false;" /><br/>-->
+    <input type="button" name="sound" value="Disconnect" onclick="disconnect(); return false;" /><br/>
+    <input type="button" name="sound" value="Connect" onclick="connect(); return false;" /><br/>
 
     Messages<br/>
     <div id="messages"></div>

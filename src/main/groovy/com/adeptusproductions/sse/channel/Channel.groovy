@@ -8,6 +8,12 @@ public class Channel {
     private final Logger LOG = LoggerFactory.getLogger(Channel.class)
     private final List<Listener> listeners = Collections.synchronizedList([])
 
+    String name
+
+    def Channel(String name) {
+        this.name = name
+    }
+
     def sound(String str) {
         pub("sound", [sound: str])
     }
@@ -46,17 +52,23 @@ public class Channel {
         synchronized(listeners) {
             listeners.add(l)
         }
-        pub('channel-message', [message: "User added. User count now: " + listenerCount()])
+        pub('channel-message', [message: "User added. User count now: " + listenerCount(),
+                name: name,
+                userCount: listenerCount()])
     }
 
     public void userParted(Listener l) {
         removeListener(l)
-        pub('server-message', [message: "User left. User count now: " + listenerCount()])
+        pub('server-message', [message: "User left. User count now: " + listenerCount(),
+                name: name,
+                userCount: listenerCount()])
     }
 
     public void userDropped(Listener l) {
         removeListener(l)
-        pub('server-message', [message: "User dropped. User count now: " + listenerCount()])
+        pub('server-message', [message: "User dropped. User count now: " + listenerCount(),
+                name: name,
+                userCount: listenerCount()])
     }
     
     public void removeListener(Listener l) {

@@ -8,7 +8,7 @@ package com.adeptusproductions.sse.channel
  * To change this template use File | Settings | File Templates.
  */
 class Channels {
-    static Map<String, Channel> channels = [:].withDefault { new Channel() }
+    static Map<String, Channel> channels = [:].withDefault { new Channel(it) }
 
     static void userParted(Listener listener) {
         channels.values().each { it.userParted(listener) }

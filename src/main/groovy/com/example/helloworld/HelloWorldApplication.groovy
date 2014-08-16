@@ -2,6 +2,7 @@ package com.example.helloworld
 
 import com.adeptusproductions.sse.channel.ChannelEventSourceServlet
 import com.adeptusproductions.sse.channel.ChannelResource
+import com.adeptusproductions.sse.channel.ChannelsResource
 import com.adeptusproductions.sse.random.RandomNumberEventSourceServlet
 import com.example.helloworld.cli.RenderCommand
 import com.example.helloworld.core.Template
@@ -45,6 +46,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         environment.servlets().addServlet("random", new RandomNumberEventSourceServlet()).addMapping("/randomNumber")
 
         environment.jersey().register(new ChannelResource());
+        environment.jersey().register(new ChannelsResource());
         environment.servlets().addServlet("channel", new ChannelEventSourceServlet()).addMapping("/channel/events")
     }
 }
