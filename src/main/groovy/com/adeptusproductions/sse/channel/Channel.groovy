@@ -59,14 +59,14 @@ public class Channel {
 
     public void userParted(Listener l) {
         removeListener(l)
-        pub('server-message', [message: "User ${l.name?:''} left. User count now: " + listenerCount(),
+        pub('channel-message', [message: "User ${l.name?:''} left. User count now: " + listenerCount(),
                 name: name,
                 userCount: listenerCount()])
     }
 
     public void userDropped(Listener l) {
         removeListener(l)
-        pub('server-message', [message: "User ${l.name?:''} dropped. User count now: " + listenerCount(),
+        pub('channel-message', [message: "User ${l.name?:''} dropped. User count now: " + listenerCount(),
                 name: name,
                 userCount: listenerCount()])
     }

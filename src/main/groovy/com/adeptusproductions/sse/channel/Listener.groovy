@@ -28,7 +28,6 @@ class Listener implements EventSource {
     public void onOpen(EventSource.Emitter emitter) throws IOException {
         LOG.info("onOpen")
         this.emitter = emitter
-        event("server-message", [message: "eventSource onOpen"])
     }
 
     @Override
