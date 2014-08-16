@@ -1,0 +1,143 @@
+<html>
+<head>
+    <title>Colour</title>
+    <script src="/assets/jquery-1.11.1.min.js"></script>
+
+    <script type='text/javascript'>
+        var channel = "colour";
+        var source;
+
+        window.onload = function(){
+            if(typeof(EventSource) !== "undefined") {
+                connect(channel, null);
+            } else {
+                log("EventSource is undefined");
+                alert("Sorry, your browser does not support server-sent events, so it cannot receive events. You can still send events to other users though. ");
+            }
+        };
+
+        function connect(channel, user) {
+//            setupEventSource("/channel/" + channel + "/events");
+            setupEventSource("/channel/events?user=" + user + "&channel=" + channel);
+        }
+
+        function red() {
+            publish("colour", {colour: '#FF0000'})
+        }
+
+        function green() {
+            publish("colour", {colour: '#00FF00'})
+        }
+
+        function publish(event, data) {
+            $.post('/channel/' + channel + '/' + event, data);
+        }
+
+        function log(msg) {
+            // stupid IE doesn't support console, so processing stops. annoy the user with alerts instead.
+            if (typeof(console) !== "undefined") console.log(msg);
+//            else alert(msg);
+        }
+
+        function addLineToElement(div, msg) {
+            var msgElement = document.getElementById(div);
+            msgElement.innerHTML = msgElement.innerHTML + msg + "<br/>";
+        }
+
+        function addAlert(msg) {
+            addLineToElement("alerts", msg);
+        }
+
+        function addMessage(msg) {
+            addLineToElement("messages", msg);
+        }
+
+        function setupEventSource(path) {
+            source = new EventSource(path);
+
+            source.addEventListener('open', function(e) {
+                // Connection was opened.
+                log("EventListener connected to " + path);
+            }, false);
+
+            source.addEventListener('error', function(e) {
+                console.log("error: " + e);
+//                console.log("target: " + e.target);
+//                console.log("target data: " + e.target.data);
+                switch (e.target.readyState) {
+                    // if reconnecting
+                    case EventSource.CONNECTING:
+                        log("Error. Reconnecting...");
+                        break;
+                    // if error was fatal
+                    case EventSource.CLOSED:
+                        // Connection was closed.
+                        log("Error. Connection closed.");
+                        break;
+                }
+            }, false);
+
+            // generic event handler where event name not known
+            source.onmessage = function(event) {
+                log("onmessage default event handler: " + event.data);
+//                log("event name: " + event.name);
+                writeObj(event)
+            };
+
+            // event with no type defaults to message
+            source.addEventListener('message', function(event) {
+                log("message event: " + event.data);
+//                log("lastEventId: " + event.lastEventId);
+                var data = jQuery.parseJSON(event.data);
+                addMessage("message: " + data.message);
+            }, false);
+
+            source.addEventListener('colour', function(event) {
+                log("colour event: " + event.data);
+                var data = jQuery.parseJSON(event.data);
+                document.body.style.background = data.colour;
+            }, false);
+
+        }
+
+        function writeObj(obj, message) {
+            if (!message) {
+                message = obj;
+            }
+            var details = "*****************" + "\n" + message + "\n";
+            var fieldContents;
+            for (var field in obj) {
+                fieldContents = obj[field];
+                if (typeof(fieldContents) == "function") {
+                    fieldContents = "(function)";
+                }
+                details += "  " + field + ": " + fieldContents + "\n";
+            }
+            console.log(details);
+        }
+
+    </script>
+    <style>
+        .centered {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="centered">
+    Alerts<br/>
+    <div id="alerts"></div>
+    <br/>
+
+    <input type="button" name="sound" value="Green" onclick="green(); return false;" /><br/>
+    <input type="button" name="sound" value="Red" onclick="red(); return false;" /><br/>
+
+    Messages<br/>
+    <div id="messages"></div>
+
+</div>
+
+</body>
+</html>
