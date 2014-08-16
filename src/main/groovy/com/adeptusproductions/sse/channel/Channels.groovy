@@ -8,7 +8,15 @@ package com.adeptusproductions.sse.channel
  * To change this template use File | Settings | File Templates.
  */
 class Channels {
-    static Map<String, Channel> channels = [:].withDefault { new Channel(it) }
+    // TODO methods should be synchronized
+    static Map<String, Channel> channels = [:].asSynchronized().withDefault { String name -> newChannel(name) }
+
+    static Channel newChannel(String name) {
+        // TODO check if existing... shouldn't happen, but did that one time.
+        def c = new Channel(name)
+        println "new channel created: ${name}"
+        c
+    }
 
     static void userParted(Listener listener) {
         channels.values().each { it.userParted(listener) }

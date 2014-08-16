@@ -72,6 +72,7 @@
                 log("message event: " + event.data);
 //                log("lastEventId: " + event.lastEventId);
                 var data = jQuery.parseJSON(event.data);
+                writeObj(event, "message event" );
                 addMessage("message: " + data.message)
             }, false);
 
@@ -89,7 +90,7 @@
                 log("sound event: " + event.data);
 //                log("lastEventId: " + event.lastEventId);
                 var data = jQuery.parseJSON(event.data);
-                log("event data: " + data);
+                writeObj(event, "sound event");
                 addMessage("sound: " + data.sound);
             }, false);
         }
