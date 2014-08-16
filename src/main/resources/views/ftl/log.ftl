@@ -5,6 +5,7 @@
 
     <script type='text/javascript'>
         // TODO get from request
+        // alternatively get the ./info page and extract channel from that?
         var channel = "pig";
 
         window.onload = function(){
@@ -23,6 +24,11 @@
             // stupid IE doesn't support console, so processing stops. annoy the user with alerts instead.
             if (typeof(console) !== "undefined") console.log(msg);
 //            else alert(msg);
+        }
+
+        function debugEvent(event) {
+            var data = jQuery.parseJSON(event.data);
+            writeObj(data, event.type + " event data" );
         }
 
         function addLineToElement(div, msg) {
@@ -63,36 +69,31 @@
                 }
             }, false);
 
-//            source.onmessage = function(event) {
-//                log("onmessage default event handler: " + event.data);
-//            };
-
-            // event with no type defaults to message
-            source.addEventListener('message', function(event) {
-                log("message event: " + event.data);
+            // generic event handler called if no specific event listener
+            source.onmessage = function(event) {
+                log("onmessage default event handler");
 //                log("lastEventId: " + event.lastEventId);
-                var data = jQuery.parseJSON(event.data);
-                writeObj(event, "message event" );
-                addMessage("message: " + data.message)
-            }, false);
+                debugEvent(event);
+            };
 
             source.addEventListener('server-message', function(event) {
                 var data = jQuery.parseJSON(event.data);
-                addMessage("server-message: " + data.message)
+                addMessage("server-message: " + data.message);
             }, false);
 
             source.addEventListener('channel-message', function(event) {
                 var data = jQuery.parseJSON(event.data);
-                addMessage("channel-message: " + data.message)
+                addMessage("channel-message: " + data.message);
+                document.getElementById('info').innerHTML = "Users: " + data.userCount
             }, false);
 
-            source.addEventListener('sound', function(event) {
-                log("sound event: " + event.data);
-//                log("lastEventId: " + event.lastEventId);
-                var data = jQuery.parseJSON(event.data);
-                writeObj(event, "sound event");
-                addMessage("sound: " + data.sound);
-            }, false);
+//            source.addEventListener('sound', function(event) {
+//                log("sound event: " + event.data);
+////                log("lastEventId: " + event.lastEventId);
+//                var data = jQuery.parseJSON(event.data);
+//                writeObj(event.data, event.type + " event data" );
+//                addMessage("sound: " + data.sound);
+//            }, false);
         }
 
         function writeObj(obj, message) {
@@ -123,6 +124,8 @@
 
 <div class="centered">
     <h2>Log</h2>
+    <div id="info">Users: ?</div>
+    <br/>
 
     Alerts<br/>
     <div id="alerts"></div>

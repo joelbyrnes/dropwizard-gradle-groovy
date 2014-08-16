@@ -30,10 +30,6 @@
             $.post('/channels/quit', {message: 'bye'});
         }
 
-        function plainMessage() {
-            publish("plain", {message: "plain message"})
-        }
-
         function publish(event, data) {
 //            log("publishing: " + event + ", data: " + data);
             $.post('/channel/' + channel + '/' + event, data);
@@ -181,7 +177,7 @@
     <input type="button" name="sound" value="Disconnect" onclick="disconnect(); return false;" /><br/>
     <input type="button" name="sound" value="Connect" onclick="connect(); return false;" /><br/>
     <input type="button" name="sound" value="Quit" onclick="quit(); return false;" /><br/>
-    <input type="button" name="sound" value="Send plain message" onclick="plainMessage(); return false;" /><br/>
+    <input type="button" name="sound" value="Send unhandled event message" onclick="publish('weird', {message: 'a message'}); return false;" /><br/>
     <input type="button" name="sound" value="Squeak" onclick="publish('sound', {url: '/assets/sounds/2squeaks.wav'}); return false;" /><br/>
     <input type="button" name="sound" value="Ping" onclick="ping(); return false;" /><br/>
 
