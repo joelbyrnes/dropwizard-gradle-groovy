@@ -25,4 +25,8 @@ class Channels {
     static void userDropped(Listener listener) {
         channels.values().each { it.userDropped(listener) }
     }
+
+    static void userQuit(Listener listener) {
+        channels.values().each { it.userDropped(listener) }
+    }
 }
