@@ -13,10 +13,13 @@ public class ChannelEventSourceServlet extends EventSourceServlet {
 	@Override
 	protected EventSource newEventSource(HttpServletRequest request) {
         LOG.info("ChannelEventSourceServlet")
-        def l = new Listener()
-        println "eventsource request for channel ${request.getParameter("channel")}"
+        def channelParam = request.getParameter("channel")
+        def userParam = request.getParameter("user")
+        println "eventsource request for channel ${channelParam} for user ${userParam}"
+        def l = new Listener(userParam)
         def channel = Channels.channels.get(request.getParameter("channel"))
         channel.addListener(l)
+        // TODO how to return user their unique id? also track sessions?
         return l
 	}
 }

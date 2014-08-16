@@ -16,9 +16,11 @@ class Listener implements EventSource {
     private static final Logger LOG = LoggerFactory.getLogger(Listener.class)
 
     private EventSource.Emitter emitter
-    private String id
+    String id
+    String name
 
-    public Listener() {
+    public Listener(String name) {
+        this.name = name
         this.id = UUID.randomUUID().toString()
     }
 

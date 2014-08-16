@@ -52,21 +52,21 @@ public class Channel {
         synchronized(listeners) {
             listeners.add(l)
         }
-        pub('channel-message', [message: "User added. User count now: " + listenerCount(),
+        pub('channel-message', [message: "User ${l.name?:''} added. User count now: " + listenerCount(),
                 name: name,
                 userCount: listenerCount()])
     }
 
     public void userParted(Listener l) {
         removeListener(l)
-        pub('server-message', [message: "User left. User count now: " + listenerCount(),
+        pub('server-message', [message: "User ${l.name?:''} left. User count now: " + listenerCount(),
                 name: name,
                 userCount: listenerCount()])
     }
 
     public void userDropped(Listener l) {
         removeListener(l)
-        pub('server-message', [message: "User dropped. User count now: " + listenerCount(),
+        pub('server-message', [message: "User ${l.name?:''} dropped. User count now: " + listenerCount(),
                 name: name,
                 userCount: listenerCount()])
     }
@@ -75,7 +75,6 @@ public class Channel {
         synchronized(listeners) {
             listeners.remove(l)
         }
-//        pub('channel-message', [message: "User removed. User count now: " + listenerCount()])
     }
 
     public Long listenerCount() {
