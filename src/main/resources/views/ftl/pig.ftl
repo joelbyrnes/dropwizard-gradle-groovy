@@ -89,8 +89,7 @@
                 log("sound event: " + event.data);
 //                log("lastEventId: " + event.lastEventId);
                 var data = jQuery.parseJSON(event.data);
-                log("event data: " + data);
-                playLocal(data.sound);
+                playLocal(data.url);
             }, false);
         }
 
@@ -100,12 +99,13 @@
         }
 
         function playAll(sound) {
-            $.post('/channel/' + channel + '/sound', {sound: sound});
+//            $.post('/channel/' + channel + '/sound', {url: sound});
+            publish('sound', {url: sound});
         }
 
         function publish(event, data) {
 //            log("publishing: " + event + ", data: " + data);
-            $.post('/channel/' + channel + '/' + event, {url: data.soundUrl});
+            $.post('/channel/' + channel + '/' + event, data);
         }
 
         function playLocal(soundUrl) {
