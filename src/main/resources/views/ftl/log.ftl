@@ -4,9 +4,8 @@
     <script src="/assets/jquery-1.11.1.min.js"></script>
 
     <script type='text/javascript'>
-        // TODO get from request
         // alternatively get the ./info page and extract channel from that?
-        var channel = "pig";
+        var channel = "${channel?html}";
 
         window.onload = function(){
 //            log("called onload");

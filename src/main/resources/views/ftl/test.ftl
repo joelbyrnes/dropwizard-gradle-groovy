@@ -63,17 +63,20 @@
             document.getElementById('info').innerHTML = "Users: " + count;
         }
 
+        function getChannelInfo() {
+            $.get('/channel/' + channel + '/info', function(info) {
+                writeObj(info, "channel info");
+                setUserCount(info.userCount);
+            });
+        }
+
         function setupEventSource(path) {
             source = new EventSource(path);
 
             source.addEventListener('open', function(e) {
                 // Connection was opened.
                 log("EventListener connected to " + path);
-
-                $.get('/channel/' + channel + '/info', function(info) {
-                    writeObj(info, "channel info");
-                    setUserCount(info.userCount);
-                });
+                getChannelInfo();
             }, false);
 
             source.addEventListener('error', function(e) {
