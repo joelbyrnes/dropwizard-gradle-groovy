@@ -2,6 +2,7 @@
 <head>
     <title>Colour</title>
     <script src="/assets/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="farbtastic/farbtastic.js"></script>
 
     <script type='text/javascript'>
         var channel = "colour";
@@ -19,14 +20,6 @@
         function connect(channel, user) {
 //            setupEventSource("/channel/" + channel + "/events");
             setupEventSource("/channel/events?user=" + user + "&channel=" + channel);
-        }
-
-        function red() {
-            publish("colour", {colour: '#FF0000'})
-        }
-
-        function green() {
-            publish("colour", {colour: '#00FF00'})
         }
 
         function publish(event, data) {
@@ -108,22 +101,51 @@
         }
 
     </script>
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            $('#picker').farbtastic('#color');
+            $.farbtastic('#picker').linkTo(setColour);
+        });
+
+        function setColour(colour) {
+            var colorField = $('#color');
+            colorField.css({
+                backgroundColor: colour
+            });
+            if (colorField.val() && colorField.val() != colour) {
+                colorField.val(colour);
+            }
+
+            publish("colour", {colour: colour});
+//            document.bgColor = colour;
+        }
+
+    </script>
+
     <style>
         .centered {
             text-align: center;
         }
     </style>
+    <link rel="stylesheet" href="farbtastic/farbtastic.css" type="text/css"/>
+
 </head>
 
 <body>
 
 <div class="centered">
+    <h2>Background colour</h2>
+
     <div id="info"></div>
     <br/>
 
-    <input type="button" name="sound" value="Green" onclick="green(); return false;" /><br/>
-    <input type="button" name="sound" value="Red" onclick="red(); return false;" /><br/>
-    <br/>
+    <form action="" style="width: 300px;" onsubmit="return false;">
+        <div class="form-item"><label for="color">Color:</label><input type="text" id="color" name="color" value="#123456"/></div>
+        <div id="picker"></div>
+    </form>
+
+    <p><a href="http://www.acko.net/dev/farbtastic">Farbtastic</a> created by <a href="http://www.acko.net/">Steven Wittens</a>.</p>
 
     Messages<br/>
     <div id="messages"></div>
