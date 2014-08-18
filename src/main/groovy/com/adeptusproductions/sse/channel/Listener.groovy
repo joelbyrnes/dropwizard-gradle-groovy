@@ -43,7 +43,7 @@ class Listener implements EventSource {
     }
 
     public void data(String dataToSend) throws IOException {
-        LOG.info("emitEvent data: " + dataToSend)
+//        LOG.info("emitEvent data: " + dataToSend)
         this.emitter?.data(dataToSend)
     }
 
@@ -55,7 +55,7 @@ class Listener implements EventSource {
     }
 
     public void event(String eventName, String dataToSend) throws IOException {
-        LOG.info("emitEvent event '${eventName}', data '$dataToSend'")
+//        LOG.info("emitEvent event '${eventName}', data '$dataToSend'")
         this.emitter?.event(eventName, dataToSend)
     }
 

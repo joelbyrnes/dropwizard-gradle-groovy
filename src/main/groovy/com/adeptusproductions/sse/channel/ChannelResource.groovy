@@ -22,8 +22,8 @@ public class ChannelResource {
     public Response receiveData(@PathParam("channel") String channel,
                                 @PathParam("eventName") String eventName,
                                 MultivaluedMap<String, String> formParams) {
-        println "generic event method received this data: "
-        formParams.each { println "${it.key}: ${it.value}"}
+//        println "generic event method received this data: "
+//        formParams.each { println "${it.key}: ${it.value}"}
 
         Channels.channels.get(channel).pub(eventName, formParams)
         return Response.ok().build()

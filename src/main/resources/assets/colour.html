@@ -2,7 +2,7 @@
 <head>
     <title>Colour</title>
     <script src="/assets/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="farbtastic/farbtastic.js"></script>
+    <script type="text/javascript" src="/assets/farbtastic/farbtastic.js"></script>
 
     <script type='text/javascript'>
         var channel = "colour";
@@ -80,6 +80,17 @@
                 var data = jQuery.parseJSON(event.data);
                 document.body.style.background = data.colour;
                 addMessage("a user changed bg colour to " + data.colour)
+            }, false);
+
+            source.addEventListener('server-message', function(event) {
+                var data = jQuery.parseJSON(event.data);
+                addMessage("server-message: " + data.message);
+            }, false);
+
+            source.addEventListener('channel-message', function(event) {
+                var data = jQuery.parseJSON(event.data);
+//                addMessage("channel-message: " + data.message);
+                setUserCount(data.userCount);
             }, false);
 
         }
